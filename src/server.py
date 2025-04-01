@@ -1,3 +1,4 @@
+from typing import Literal, Optional
 from fastapi import FastAPI
 from fastapi_mcp import add_mcp_server
 from jira import JIRA
@@ -6,6 +7,7 @@ import os
 jira_server = os.getenv('JIRA_SERVER') # e.g https://yourcompany.atlassian.net
 jira_username = os.getenv('JIRA_USERNAME') # e.g. yourname@yourcompany.com
 jira_api_key = os.getenv('JIRA_API_KEY') # e.g. yourapikey. Get this from https://id.atlassian.com/manage-profile/security/api-tokens
+jira_project_key = os.getenv('JIRA_PROJECT_KEY') # e.g. yourprojectkey
 
 # to run fastapi, run `uvicorn src.server:app`
 # Use FastAPI + fastapi-mcp to create an MCP server
@@ -80,6 +82,32 @@ def update_ticket_status(ticket_key: str, status: str):
     else:
         available_transitions = [t['name'] for t in transitions]
         return f"Cannot transition to '{status}'. Available transitions: {', '.join(available_transitions)}"
+
+
+# Create a new ticket.
+@mcp.tool()
+def create_ticket(title: str,
+                  description: str,
+                  owner: str=jira_username, 
+                  issue_type: Literal['Task', 'Bug', 'Story', 'Sub-task']='Task',
+                  parent_key: Optional[str] = None):
+    
+    
+    issue = jira.create_issue(
+        project= {
+            'key': jira_project_key
+        },
+        issuetype= {
+            'name': issue_type
+        },
+        summary=title,
+        description=description,
+        assignee=owner,
+        parent= {
+            'key': parent_key
+        } if parent_key else None
+    )
+    return f"Ticket created: {issue.key}"
 
 
 # For testing
