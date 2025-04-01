@@ -1,0 +1,4 @@
+jira==3.8.0
+fastapi-mcp==0.1.4
+fastapi==0.109.2
+uvicorn==0.34.0
