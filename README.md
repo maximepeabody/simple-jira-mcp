@@ -20,6 +20,7 @@ Create a `.env` file in the root directory with the following:
 JIRA_SERVER=https://yourcompany.atlassian.net
 JIRA_USERNAME=yourname@yourcompany.com
 JIRA_API_KEY=yourapikey
+JIRA_PROJECT_KEY=yourprojectkey
 ```
 
 Get your API key from: https://id.atlassian.com/manage-profile/security/api-tokens
